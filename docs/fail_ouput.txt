@@ -1,0 +1,24 @@
+Accepted files count: 1 Upload.tsx:38:15
+File accepted: new char.pdf Upload.tsx:41:17
+Attempting to create worker... Upload.tsx:44:19
+Worker created successfully. Upload.tsx:48:19
+Posting message to worker... Upload.tsx:83:19
+Message posted to worker. Upload.tsx:85:19
+[vite] connecting... client:733:9
+Worker received message: 
+Object { file: File }
+pdf.worker.ts:5:11
+File received in worker: new char.pdf 167405 application/pdf pdf.worker.ts:8:13
+FileReader onload triggered. pdf.worker.ts:12:17
+TypedArray created. Length: 167405 pdf.worker.ts:16:21
+Error loading PDF document: Error: No "GlobalWorkerOptions.workerSrc" specified.
+    get workerSrc http://localhost:5173/node_modules/.vite/deps/chunk-YCKD3HFA.js?v=61adac81:12135
+    _initialize http://localhost:5173/node_modules/.vite/deps/chunk-YCKD3HFA.js?v=61adac81:12027
+    _PDFWorker http://localhost:5173/node_modules/.vite/deps/chunk-YCKD3HFA.js?v=61adac81:12002
+    getDocument http://localhost:5173/node_modules/.vite/deps/chunk-YCKD3HFA.js?v=61adac81:11162
+    onload http://localhost:5173/src/worker/pdf.worker.ts?worker_file&type=module:18
+pdf.worker.ts:59:23
+Message from worker: 
+Object { type: "error", message: 'Failed to load PDF document: No "GlobalWorkerOptions.workerSrc" specified.' }
+Upload.tsx:55:21
+Error message from worker: Failed to load PDF document: No "GlobalWorkerOptions.workerSrc" specified.

@@ -1,0 +1,36 @@
+.featuresSection {
+  padding: 6rem 1.5rem;
+  background-color: var(--color-secondary-bg);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.feature {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.featureTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 1rem;
+}
+
+.featureDescription {
+  font-size: 1rem;
+  color: var(--color-foreground);
+  opacity: 0.8;
+  line-height: 1.6;
+}

@@ -1,0 +1,53 @@
+.viewContainer {
+    padding: 2rem;
+    text-align: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    background-color: var(--color-secondary-bg);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.button {
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background-color: #7c4dff;
+    transform: translateY(-2px);
+}
+
+.pageInfo {
+    font-size: 1.1rem;
+    color: var(--color-foreground);
+    font-weight: 500;
+}
+
+.pdfContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.pdfContainer canvas {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

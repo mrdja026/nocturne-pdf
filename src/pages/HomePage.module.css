@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1.5rem; /* Use padding on the sides */
+  box-sizing: border-box;
+  min-height: 90vh; /* Give the hero section significant space */
+  width: 100%; /* Ensure it spans full width */
+}
+
+main {
+  flex-grow: 1;
+  width: 100%; /* Ensure it spans full width */
+}

@@ -1,0 +1,61 @@
+.howItWorksSection {
+  padding: 2rem 1.5rem 4rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stepsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.step {
+  flex: 1;
+  min-width: 260px;
+  max-width: 320px;
+  text-align: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+/* Adding decorative arrows between steps */
+.step:not(:last-child)::after {
+  content: '→';
+  color: var(--color-accent);
+  opacity: 0.5;
+  font-size: 2.5rem;
+  position: absolute;
+  right: -2rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 960px) {
+  .step:not(:last-child)::after {
+    display: none; /* Hide arrows on smaller screens where layout wraps */
+  }
+}
+
+.stepNumber {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+}
+
+.stepTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.stepDescription {
+  font-size: 0.9rem;
+  color: var(--color-foreground);
+  opacity: 0.7;
+  line-height: 1.5;
+}
