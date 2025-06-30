@@ -1,9 +1,64 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
+import * as pdfjsLib from 'pdfjs-dist';
 import styles from './Upload.module.css';
 
-// A simple SVG icon for upload
+// --- PDF.js Configuration ---
+const PDF_JS_VERSION = '4.10.38';
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${PDF_JS_VERSION}/build/pdf.worker.mjs`;
+const CMAP_URL = `https://unpkg.com/pdfjs-dist@${PDF_JS_VERSION}/cmaps/`;
+const STANDARD_FONT_DATA_URL = `https://unpkg.com/pdfjs-dist@${PDF_JS_VERSION}/standard_fonts/`;
+
+// --- Helper Functions ---
+async function processPdf(
+  file: File,
+  onTotalPages: (total: number) => void,
+  onProgress: (page: number) => void
+) {
+  const typedArray = new Uint8Array(await file.arrayBuffer());
+  const loadingTask = pdfjsLib.getDocument({
+    data: typedArray,
+    cMapUrl: CMAP_URL,
+    standardFontDataUrl: STANDARD_FONT_DATA_URL,
+    cMapPacked: true,
+  });
+
+  const pdf = await loadingTask.promise;
+  const numPages = pdf.numPages;
+  onTotalPages(numPages); // Report total pages as soon as we know them
+
+  const imageBitmaps: ImageBitmap[] = [];
+
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = new OffscreenCanvas(viewport.width, viewport.height);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+
+    if (context) {
+      await page.render({ canvasContext: context as any, viewport }).promise;
+
+      // Invert colors
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      for (let j = 0; j < data.length; j += 4) {
+        data[j] = 255 - data[j];
+        data[j + 1] = 255 - data[j + 1];
+        data[j + 2] = 255 - data[j + 2];
+      }
+      context.putImageData(imageData, 0, 0);
+    }
+
+    imageBitmaps.push(canvas.transferToImageBitmap());
+    onProgress(i); // Report progress for the current page
+  }
+
+  return { imageBitmaps };
+}
+
+
+// --- Upload Icon Component ---
 const UploadIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -22,6 +77,7 @@ const UploadIcon = () => (
   </svg>
 );
 
+// --- Upload Component ---
 interface UploadProps {
   onUploadComplete: (bitmaps: ImageBitmap[]) => void;
 }
@@ -30,118 +86,74 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState<number | null>(null);
   const [totalPages, setTotalPages] = useState<number | null>(null);
-
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      console.log('onDrop triggered.');
-      console.log('Accepted files count:', acceptedFiles.length);
-      if (acceptedFiles.length > 0) {
-        const file = acceptedFiles[0];
-        console.log('File accepted:', file.name);
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0 || isProcessing) {
+        return;
+      }
 
-        try {
-          console.log('Attempting to create worker...');
-          const worker = new Worker(new URL('../worker/pdf.worker.ts', import.meta.url), {
-            type: 'module',
-          });
-          console.log('Worker created successfully.');
+      const file = acceptedFiles[0];
+      setIsProcessing(true);
+      setProgress(0);
+      setTotalPages(null);
 
-          worker.onmessage = (e) => {
-            if (!e.data) {
-              console.error('Received empty message from worker. This might indicate an unhandled error inside the worker.');
-              return;
-            }
-            console.log('Message from worker:', e.data);
-            const { type, page, total, imageBitmaps, message } = e.data;
-            if (type === 'total_pages') {
-              setTotalPages(total);
-            } else if (type === 'progress') {
-              setProgress(page);
-            } else if (type === 'complete') {
-              onUploadComplete(imageBitmaps);
-              navigate('/view');
-              worker.terminate();
-            } else if (type === 'error') {
-              console.error('Error message from worker:', message);
-              alert(message);
-              worker.terminate();
-            }
-          };
-
-          worker.onerror = (error) => {
-            console.error('Worker error event:', error);
-            if (error instanceof ErrorEvent && error.message) {
-              console.error('Worker error message:', error.message);
-              alert(`An error occurred in the PDF processing worker: ${error.message}`);
-            } else {
-              alert('An unknown error occurred in the PDF processing worker.');
-            }
-            worker.terminate();
-          };
-
-          console.log('Posting message to worker...');
-          worker.postMessage({ file });
-          console.log('Message posted to worker.');
-
-        } catch (error) {
-          console.error('Failed to create or communicate with worker:', error);
-          alert('A critical error occurred with the processing engine.');
-        }
-      } else {
-        console.log('No files were accepted by react-dropzone.');
+      try {
+        const { imageBitmaps } = await processPdf(
+          file,
+          (total) => setTotalPages(total),
+          (page) => setProgress(page)
+        );
+        onUploadComplete(imageBitmaps);
+        navigate('/view');
+      } catch (error) {
+        console.error('Failed to process PDF:', error);
+        const message = error instanceof Error ? error.message : String(error);
+        alert(`Failed to process PDF: ${message}`);
+      } finally {
+        setIsProcessing(false);
+        setProgress(null);
+        setTotalPages(null);
       }
     },
-    [navigate, onUploadComplete]
+    [navigate, onUploadComplete, isProcessing]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-    },
-    maxSize: 20 * 1024 * 1024, // 20MB
+    accept: { 'application/pdf': ['.pdf'] },
+    maxSize: 20 * 1024 * 1024,
+    disabled: isProcessing,
     onDropRejected: (fileRejections) => {
-      console.log('onDropRejected triggered with rejections:', fileRejections);
-      if (fileRejections.length > 0 && fileRejections[0].errors.length > 0) {
-        const error = fileRejections[0].errors[0];
-        console.log('Rejection error code:', error.code);
-        console.log('Rejection error message:', error.message);
-        if (error.code === 'file-too-large') {
-          alert('File is larger than 20MB');
-        } else if (error.code === 'file-invalid-type') {
-          alert('Please upload a PDF file.');
-        } else {
-          alert('An unknown error occurred during file upload.');
-        }
+      if (fileRejections[0]?.errors[0]?.code === 'file-too-large') {
+        alert('File is larger than 20MB');
       } else {
-        alert('File upload rejected for an unknown reason.');
+        alert('Please upload a valid PDF file.');
       }
     },
   });
 
-  
-
-  const dropzoneClassName = isDragActive
-    ? `${styles.dropzone} ${styles.active}`
-    : styles.dropzone;
+  const dropzoneClassName = `${styles.dropzone} ${isDragActive ? styles.active : ''} ${isProcessing ? styles.disabled : ''}`;
 
   return (
     <div className={styles.uploadContainer}>
-      {progress !== null && totalPages !== null ? (
+      {isProcessing ? (
         <div className={styles.progressContainer}>
           <p>Processing PDF...</p>
-          <progress value={progress} max={totalPages} className={styles.progressBar} />
-          <p>{`Page ${progress} of ${totalPages}`}</p>
+          {totalPages !== null && (
+            <>
+              <progress value={progress ?? 0} max={totalPages} className={styles.progressBar} />
+              <p>{`Page ${progress} of ${totalPages}`}</p>
+            </>
+          )}
         </div>
       ) : (
         <div {...getRootProps()} className={dropzoneClassName}>
           <input {...getInputProps()} />
           <p>
             <UploadIcon />
-            {isDragActive
-              ? 'Drop the PDF here...'
-              : "Drag & Drop PDF or Click to Select"}
+            {isDragActive ? 'Drop the PDF here...' : 'Drag & Drop PDF or Click to Select'}
           </p>
         </div>
       )}
