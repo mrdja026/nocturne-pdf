@@ -1,18 +1,33 @@
 .viewContainer {
-    padding: 2rem;
+    padding: 6rem 2rem 2rem 170px; /* Add left padding for the sidebar */
     text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .controls {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 2rem;
     background-color: var(--color-secondary-bg);
     padding: 1rem 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px var(--color-shadow);
+    z-index: 1000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+}
+
+.controls.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .button {
@@ -27,27 +42,81 @@
 }
 
 .button:hover {
-    background-color: #7c4dff;
+    background-color: var(--color-accent-hover);
     transform: translateY(-2px);
 }
 
-.pageInfo {
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pageInfo, .zoomInfo {
     font-size: 1.1rem;
     color: var(--color-foreground);
     font-weight: 500;
 }
 
+.goToPage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pageInput {
+    width: 60px;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    text-align: center;
+    font-size: 1rem;
+}
+
 .pdfContainer {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    overflow: auto; /* Make this container scrollable */
+    cursor: grab;
+    padding-right: 15px; /* Prevent scrollbar from overlapping content */
+}
+
+.pdfContainer.dragging {
+    cursor: grabbing;
 }
 
 .pdfContainer canvas {
     max-width: 100%;
     height: auto;
-    border: 1px solid #444;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 8px var(--color-shadow);
+    margin-bottom: 1rem; /* Add space between pages */
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.searchInput {
+    width: 150px;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 1rem;
+}
+
+.searchResultCount {
+    font-size: 1rem;
+    color: var(--color-foreground);
+    margin-left: 0.5rem;
 }

@@ -5,16 +5,18 @@ import Features from '../components/Features';
 import HowItWorks from '../components/HowItWorks';
 import Footer from '../components/Footer';
 import styles from './HomePage.module.css';
+import type { TextLayer } from '../types';
 
 interface HomePageProps {
-  onUploadComplete: (bitmaps: ImageBitmap[]) => void;
+  onUploadComplete: (bitmaps: ImageBitmap[], textLayers: TextLayer[][]) => void;
+  theme: string;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onUploadComplete }) => {
+const HomePage: React.FC<HomePageProps> = ({ onUploadComplete, theme }) => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Hero />
+        <Hero theme={theme} />
         <HowItWorks />
         <Upload onUploadComplete={onUploadComplete} />
       </header>

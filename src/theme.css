@@ -1,7 +1,19 @@
 :root {
-  --color-background: #0D1117; /* Midnight Blue */
-  --color-foreground: #C9D1D9; /* Moonlight Silver */
-  --color-accent: #8B5CF6;      /* Luminous Lavender */
-  --color-secondary-bg: #161B22; /* Twilight Blue */
-  --color-border: #30363d;
+  --color-background: #121212;
+  --color-secondary-bg: #1e1e1e;
+  --color-foreground: #ffffff;
+  --color-accent: #673ab7;
+  --color-accent-hover: #7c4dff;
+  --color-border: #444;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='light'] {
+  --color-background: #ffffff;
+  --color-secondary-bg: #f5f5f5;
+  --color-foreground: #000000;
+  --color-accent: #673ab7;
+  --color-accent-hover: #7c4dff;
+  --color-border: #ddd;
+  --color-shadow: rgba(0, 0, 0, 0.1);
 }
