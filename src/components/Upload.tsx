@@ -87,6 +87,7 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
   const [progress, setProgress] = useState<number | null>(null);
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -96,6 +97,7 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
 
       const file = acceptedFiles[0];
       setIsProcessing(true);
+      setIsError(false);
       setProgress(0);
       setTotalPages(null);
 
@@ -109,8 +111,8 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
         navigate('/view');
       } catch (error) {
         console.error('Failed to process PDF:', error);
-        const message = error instanceof Error ? error.message : String(error);
-        alert(`Failed to process PDF: ${message}`);
+        setIsError(true);
+        setTimeout(() => setIsError(false), 1000);
       } finally {
         setIsProcessing(false);
         setProgress(null);
@@ -125,27 +127,22 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
     accept: { 'application/pdf': ['.pdf'] },
     maxSize: 20 * 1024 * 1024,
     disabled: isProcessing,
-    onDropRejected: (fileRejections) => {
-      if (fileRejections[0]?.errors[0]?.code === 'file-too-large') {
-        alert('File is larger than 20MB');
-      } else {
-        alert('Please upload a valid PDF file.');
-      }
+    onDropRejected: () => {
+      setIsError(true);
+      setTimeout(() => setIsError(false), 1000);
     },
   });
 
-  const dropzoneClassName = `${styles.dropzone} ${isDragActive ? styles.active : ''} ${isProcessing ? styles.disabled : ''}`;
+  const dropzoneClassName = `${styles.dropzone} ${isDragActive ? styles.active : ''} ${isProcessing ? styles.disabled : ''} ${isError ? styles.error : ''}`;
 
   return (
     <div className={styles.uploadContainer}>
       {isProcessing ? (
         <div className={styles.progressContainer}>
+          <div className={styles.spinner}></div>
           <p>Processing PDF...</p>
           {totalPages !== null && (
-            <>
-              <progress value={progress ?? 0} max={totalPages} className={styles.progressBar} />
-              <p>{`Page ${progress} of ${totalPages}`}</p>
-            </>
+            <p>{`Page ${progress} of ${totalPages}`}</p>
           )}
         </div>
       ) : (
