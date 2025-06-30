@@ -15,14 +15,14 @@
   transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.4), 0 5px 15px -5px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.4), 0 5px 15px -5px var(--color-shadow);
 }
 
 .dropzone:hover,
 .active {
-  background-color: #7c4dff; /* A slightly lighter shade for hover */
+  background-color: var(--color-accent-hover); /* A slightly lighter shade for hover */
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px -5px rgba(139, 92, 246, 0.5), 0 8px 20px -5px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 30px -5px rgba(139, 92, 246, 0.5), 0 8px 20px -5px var(--color-shadow);
 }
 
 .dropzone p {
@@ -50,7 +50,7 @@
 }
 
 .progressBar::-webkit-progress-bar {
-    background-color: #333;
+    background-color: var(--color-border);
 }
 
 .progressBar::-webkit-progress-value {

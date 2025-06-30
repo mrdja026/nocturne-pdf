@@ -8,13 +8,14 @@ import styles from './HomePage.module.css';
 
 interface HomePageProps {
   onUploadComplete: (bitmaps: ImageBitmap[]) => void;
+  theme: string;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onUploadComplete }) => {
+const HomePage: React.FC<HomePageProps> = ({ onUploadComplete, theme }) => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Hero />
+        <Hero theme={theme} />
         <HowItWorks />
         <Upload onUploadComplete={onUploadComplete} />
       </header>

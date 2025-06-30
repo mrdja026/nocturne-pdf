@@ -23,4 +23,24 @@
   line-height: 1.6;
 }
 
+.funnyText {
+  margin-top: 2rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-accent);
+  text-shadow: 0 0 10px var(--color-accent);
+  animation: pop-in 0.5s ease-out;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 

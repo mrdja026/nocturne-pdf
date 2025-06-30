@@ -1,5 +1,5 @@
 .viewContainer {
-    padding: 2rem;
+    padding: 6rem 2rem 2rem;
     text-align: center;
 }
 
@@ -15,7 +15,7 @@
     background-color: var(--color-secondary-bg);
     padding: 1rem 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px var(--color-shadow);
     z-index: 1000;
     transition: opacity 0.3s ease, visibility 0.3s ease;
     opacity: 1;
@@ -39,7 +39,7 @@
 }
 
 .button:hover {
-    background-color: #7c4dff;
+    background-color: var(--color-accent-hover);
     transform: translateY(-2px);
 }
 
@@ -59,7 +59,7 @@
     width: 60px;
     padding: 0.75rem;
     border-radius: 6px;
-    border: 1px solid #555;
+    border: 1px solid var(--color-border);
     background-color: var(--color-background);
     color: var(--color-foreground);
     text-align: center;
@@ -77,6 +77,6 @@
 .pdfContainer canvas {
     max-width: 100%;
     height: auto;
-    border: 1px solid #444;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 8px var(--color-shadow);
 }

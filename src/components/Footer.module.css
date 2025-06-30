@@ -23,6 +23,6 @@
 }
 
 .link:hover {
-  color: #a97af8;
+  color: var(--color-accent-hover);
   text-decoration: underline;
 }

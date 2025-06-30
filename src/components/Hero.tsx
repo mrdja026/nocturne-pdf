@@ -1,7 +1,11 @@
 import React from 'react';
 import styles from './Hero.module.css';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  theme: string;
+}
+
+const Hero: React.FC<HeroProps> = ({ theme }) => {
   return (
     <div className={styles.hero}>
       <h1 className={styles.title}>Tired of Blinding White PDFs at 2 AM?</h1>
@@ -11,6 +15,9 @@ const Hero: React.FC = () => {
         <br />
         No uploads. No tracking. No accounts.
       </p>
+      {theme === 'light' && (
+        <p className={styles.funnyText}>You see how it hurts?</p>
+      )}
     </div>
   );
 };
