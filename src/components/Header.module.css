@@ -18,6 +18,12 @@
     font-size: 1.2rem;
 }
 
+.logoLink {
+    color: inherit;
+    text-decoration: none;
+}
+
+
 .controls {
     display: flex;
     align-items: center;

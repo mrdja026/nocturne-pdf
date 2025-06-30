@@ -1,0 +1,19 @@
+ 1. Enhance the PDF Processor: I will modify the core processPdf function. As it processes each page to create the night-mode
+      image, it will also extract the text layer and its coordinates, provided by pdf.js. This text data will be packaged alongside
+      the image data.
+
+
+   2. Update Application State: The main App component will be updated to manage the state of this extracted text, passing it down
+      to the viewer page.
+
+
+   will automatically scroll to that result's position.
+       * The highlight for the current result will be a different, more prominent color (e.g., bright yellow) while all other
+         results might be a lighter, less obtrusive color (e.g., light blue).
+
+
+   3. Implement the Search UI: I will add a new search bar, "Next," and "Previous" buttons to the viewer's floating control panel.
+
+
+  This approach is highly efficient because we are not re-drawing the PDF canvases at all. We are just adding and changing
+  lightweight HTML elements on top of them, which is extremely fast for the browser.

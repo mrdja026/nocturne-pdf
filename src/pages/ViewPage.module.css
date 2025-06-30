@@ -46,6 +46,12 @@
     transform: translateY(-2px);
 }
 
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
 .pageInfo, .zoomInfo {
     font-size: 1.1rem;
     color: var(--color-foreground);
@@ -91,4 +97,26 @@
     border: 1px solid var(--color-border);
     box-shadow: 0 4px 8px var(--color-shadow);
     margin-bottom: 1rem; /* Add space between pages */
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.searchInput {
+    width: 150px;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 1rem;
+}
+
+.searchResultCount {
+    font-size: 1rem;
+    color: var(--color-foreground);
+    margin-left: 0.5rem;
 }

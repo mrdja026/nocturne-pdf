@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -14,7 +15,9 @@ const Header: React.FC<HeaderProps> = ({ theme, onThemeChange }) => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>Nocturne PDF</div>
+      <Link to="/" className={styles.logoLink}>
+        <div className={styles.logo}>Nocturne PDF</div>
+      </Link>
       <div className={styles.controls}>
         <a href="https://github.com" target="_blank" rel="noopener noreferrer" className={styles.iconLink}>
           <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -40,3 +43,4 @@ const Header: React.FC<HeaderProps> = ({ theme, onThemeChange }) => {
 };
 
 export default Header;
+

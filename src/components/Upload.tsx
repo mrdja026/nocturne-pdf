@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import styles from './Upload.module.css';
+import type { TextLayer } from '../types';
 
 // --- PDF.js Configuration ---
 const PDF_JS_VERSION = '4.10.38';
@@ -15,7 +16,7 @@ async function processPdf(
   file: File,
   onTotalPages: (total: number) => void,
   onProgress: (page: number) => void
-) {
+): Promise<{ imageBitmaps: ImageBitmap[]; textLayers: TextLayer[][] }> {
   const typedArray = new Uint8Array(await file.arrayBuffer());
   const loadingTask = pdfjsLib.getDocument({
     data: typedArray,
@@ -26,9 +27,10 @@ async function processPdf(
 
   const pdf = await loadingTask.promise;
   const numPages = pdf.numPages;
-  onTotalPages(numPages); // Report total pages as soon as we know them
+  onTotalPages(numPages);
 
   const imageBitmaps: ImageBitmap[] = [];
+  const textLayers: TextLayer[][] = [];
 
   for (let i = 1; i <= numPages; i++) {
     const page = await pdf.getPage(i);
@@ -39,7 +41,6 @@ async function processPdf(
     if (context) {
       await page.render({ canvasContext: context as any, viewport }).promise;
 
-      // Invert colors
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
       for (let j = 0; j < data.length; j += 4) {
@@ -50,11 +51,20 @@ async function processPdf(
       context.putImageData(imageData, 0, 0);
     }
 
+    const textContent = await page.getTextContent();
+    const pageTextLayer = textContent.items.map((item: any) => ({
+      str: item.str,
+      transform: item.transform,
+      width: item.width,
+      height: item.height,
+    }));
+    textLayers.push(pageTextLayer);
+
     imageBitmaps.push(canvas.transferToImageBitmap());
-    onProgress(i); // Report progress for the current page
+    onProgress(i);
   }
 
-  return { imageBitmaps };
+  return { imageBitmaps, textLayers };
 }
 
 
@@ -79,7 +89,7 @@ const UploadIcon = () => (
 
 // --- Upload Component ---
 interface UploadProps {
-  onUploadComplete: (bitmaps: ImageBitmap[]) => void;
+  onUploadComplete: (bitmaps: ImageBitmap[], textLayers: TextLayer[][]) => void;
 }
 
 const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
@@ -102,12 +112,12 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
       setTotalPages(null);
 
       try {
-        const { imageBitmaps } = await processPdf(
+        const { imageBitmaps, textLayers } = await processPdf(
           file,
           (total) => setTotalPages(total),
           (page) => setProgress(page)
         );
-        onUploadComplete(imageBitmaps);
+        onUploadComplete(imageBitmaps, textLayers);
         navigate('/view');
       } catch (error) {
         console.error('Failed to process PDF:', error);
@@ -159,3 +169,4 @@ const Upload: React.FC<UploadProps> = ({ onUploadComplete }) => {
 };
 
 export default Upload;
+
